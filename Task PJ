@@ -1,0 +1,55 @@
+import random
+
+# honestly, написано не без помощи ChatGPT ;)
+
+def draw_board(board):
+    for row in [board[i:i + 3] for i in range(0, len(board), 3)]:
+        print(" | ".join(row))
+        print("-" * 9)
+
+def get_player_move(board, player_symbol):
+    while True:
+        move = input(f"Введите номер ячейки для {player_symbol}: ")
+        if move.isdigit() and 1 <= int(move) <= 9 and board[int(move) - 1] == " ":
+            return int(move) - 1
+        else:
+            print("Некорректный ход. Попробуйте еще раз.")
+
+def get_computer_move(board, computer_symbol):
+    while True:
+        move = random.randint(1, 9)
+        if board[move - 1] == " ":
+            return move - 1
+
+def check_win(board, symbol):
+    for i in range(0, 3):
+        if all(board[i * 3 + j] == symbol for j in range(0, 3)) or \
+           all(board[j * 3 + i] == symbol for j in range(0, 3)):
+            return True
+    return all(board[i] == symbol for i in [0, 4, 8]) or all(board[i] == symbol for i in [2, 4, 6])
+
+def main():
+    board = [" "] * 9
+    player_symbol = "X"
+    computer_symbol = "O"
+
+    while " " in board:
+        draw_board(board)
+        player_move = get_player_move(board, player_symbol)
+        board[player_move] = player_symbol
+        if check_win(board, player_symbol):
+            draw_board(board)
+            print("Вы выиграли! Поздравляем!")
+            return
+        computer_move = get_computer_move(board, computer_symbol)
+        board[computer_move] = computer_symbol
+        if check_win(board, computer_symbol):
+            draw_board(board)
+            print("Вы проиграли. Попробуйте еще раз!")
+            return
+
+    draw_board(board)
+    print("Игра окончена. Ничья!")
+
+if __name__ == "__main__":
+    main()
